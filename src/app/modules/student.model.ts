@@ -7,7 +7,7 @@ import {
   TUserName,
 } from './student/student.interface';
 import validator from 'validator';
-import bcript from 'bcrypt'
+import bcript from 'bcrypt';
 import config from '../config';
 
 const userNameSchema = new Schema<TUserName>({
@@ -90,76 +90,83 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 //const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: {
-    type: String,
-    required: [true, 'Student ID is required'],
-    unique: true,
-  },
-  password:{type: String, required:true},
-  name: {
-    type: userNameSchema,
-    required: [true, 'Student name is required'],
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['female', 'male'],
-      message: 'Gender must be either "female" or "male"',
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Student ID is required'],
+      unique: true,
     },
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: { type: String },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is invalid',
+    password: { type: String, required: true },
+    name: {
+      type: userNameSchema,
+      required: [true, 'Student name is required'],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['female', 'male'],
+        message: 'Gender must be either "female" or "male"',
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: { type: String },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is invalid',
+      },
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact number is required'],
+    },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+        message: 'Invalid blood group',
+      },
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian information is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local guardian information is required'],
+    },
+    profileImg: { type: String },
+    isActive: {
+      type: String,
+      enum: {
+        values: ['active', 'inActive'],
+        message: 'isActive must be either "active" or "inActive"',
+      },
+      default: 'active',
     },
   },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required'],
-  },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
-      message: 'Invalid blood group',
+  {
+    toJSON: {
+      virtuals: true,
     },
   },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian information is required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local guardian information is required'],
-  },
-  profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'inActive'],
-      message: 'isActive must be either "active" or "inActive"',
-    },
-    default: 'active',
-  },
-});
+);
 
 //creating a custom static method
 studentSchema.statics.isUserExist = async function (id: string) {
@@ -167,11 +174,20 @@ studentSchema.statics.isUserExist = async function (id: string) {
   return existingUser;
 };
 
-studentSchema.pre("save",async function (next) {
+studentSchema.pre('save', async function (next) {
   const user = this;
-  user.password = await bcript.hash(user.password , Number(config.salt_round) )
-  next()
-})
+  user.password = await bcript.hash(user.password, Number(config.salt_round));
+  next();
+});
+
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+studentSchema.virtual('fullName').get(function () {
+  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+});
 
 // studentSchema.methods.isUserExist = async function (id: string | null) {
 //   const existingUser = await Student.findOne({ id });
