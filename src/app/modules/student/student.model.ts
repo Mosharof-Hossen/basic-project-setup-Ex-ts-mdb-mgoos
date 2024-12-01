@@ -1,9 +1,6 @@
 import { model, Schema } from 'mongoose';
 import validator from 'validator';
-import bcript from 'bcrypt';
-import config from '../../config';
 import {
-  
   StudentModel,
   TGuardian,
   TLocalGuardian,
@@ -171,17 +168,6 @@ studentSchema.statics.isUserExist = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
 };
-
-studentSchema.pre('save', async function (next) {
-  const user = this;
-  user.password = await bcript.hash(user.password, Number(config.salt_round));
-  next();
-});
-
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-});
 
 studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;

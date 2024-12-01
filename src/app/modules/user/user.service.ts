@@ -21,9 +21,8 @@ const createStudentIntoDB = async (
     studentData.id = newUser.id;
     studentData.user = newUser._id;
 
-    const newStudent = await Student.create(studentData)
-    return newStudent
-
+    const newStudent = await Student.create(studentData);
+    return newStudent;
   }
 };
 export const UserServices = {
