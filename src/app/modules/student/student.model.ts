@@ -1,14 +1,15 @@
 import { model, Schema } from 'mongoose';
+import validator from 'validator';
+import bcript from 'bcrypt';
+import config from '../../config';
 import {
+  
+  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
-  StudentModel,
   TUserName,
-} from './student/student.interface';
-import validator from 'validator';
-import bcript from 'bcrypt';
-import config from '../config';
+} from './student.interface';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -97,7 +98,12 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Student ID is required'],
       unique: true,
     },
-    password: { type: String, required: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User is required'],
+      unique: true,
+      ref: 'User',
+    },
     name: {
       type: userNameSchema,
       required: [true, 'Student name is required'],
@@ -152,14 +158,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Local guardian information is required'],
     },
     profileImg: { type: String },
-    isActive: {
-      type: String,
-      enum: {
-        values: ['active', 'inActive'],
-        message: 'isActive must be either "active" or "inActive"',
-      },
-      default: 'active',
-    },
   },
   {
     toJSON: {
