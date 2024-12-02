@@ -8,12 +8,10 @@ const createStudentIntoDB = async (
   passwordData: string,
   studentData: TStudent,
 ) => {
-  console.log(passwordData, studentData);
-
   const userData: Partial<TUser> = {};
   userData.password = passwordData || (config.default_password as string);
   userData.role = 'student';
-  userData.id = '20231834';
+  userData.id = '20231835';
 
   const newUser = await User.create(userData); // built in static method
 
