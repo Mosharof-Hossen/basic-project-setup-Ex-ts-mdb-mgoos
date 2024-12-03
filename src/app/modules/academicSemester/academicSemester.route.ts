@@ -7,7 +7,13 @@ const router = express.Router();
 
 router.get('/', AcademicSemesterControllers.getAcademicSemester);
 router.get('/:id', AcademicSemesterControllers.getSingleAcademicSemester);
-router.patch('/:id', AcademicSemesterControllers.updateAcademicSemester);
+router.patch(
+  '/:id',
+  dataValidator(
+    academicSemesterValidations.updateAcademicSemesterValidationSchema,
+  ),
+  AcademicSemesterControllers.updateAcademicSemester,
+);
 
 router.post(
   '/create-academic-semester',

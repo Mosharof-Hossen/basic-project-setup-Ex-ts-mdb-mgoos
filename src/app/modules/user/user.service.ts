@@ -1,8 +1,11 @@
 import config from '../../config';
+import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
+import { generateStudentId } from './user.utils';
 
 const createStudentIntoDB = async (
   passwordData: string,
@@ -11,7 +14,12 @@ const createStudentIntoDB = async (
   const userData: Partial<TUser> = {};
   userData.password = passwordData || (config.default_password as string);
   userData.role = 'student';
-  userData.id = '20231835';
+
+  const admissionSemester = await AcademicSemester.findById(
+    studentData.admissionSemester,
+  );
+
+  userData.id = await generateStudentId(admissionSemester);
 
   const newUser = await User.create(userData); // built in static method
 

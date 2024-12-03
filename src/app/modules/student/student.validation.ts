@@ -59,6 +59,7 @@ const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
+      id: z.string(),
       name: userNameSchema,
       gender: z.enum(['female', 'male'], {
         errorMap: () => ({
@@ -79,6 +80,7 @@ const createStudentValidationSchema = z.object({
       guardian: guardianSchema,
       localGuardian: localGuardianSchema,
       profileImg: z.string().optional(),
+      admissionSemester: z.string(),
     }),
   }),
 });
