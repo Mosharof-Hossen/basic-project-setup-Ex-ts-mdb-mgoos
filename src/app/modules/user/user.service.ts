@@ -46,6 +46,7 @@ const createStudentIntoDB = async (
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();
+    throw new AppError(500, "Filed to create student")
   }
 };
 export const UserServices = {
