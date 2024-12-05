@@ -20,36 +20,33 @@ const createStudentIntoDB = async (
     studentData.admissionSemester,
   );
 
-  const session = await mongoose.startSession()
+  const session = await mongoose.startSession();
 
   try {
-    session.startTransaction()
+    session.startTransaction();
 
     userData.id = await generateStudentId(admissionSemester);
 
     const newUser = await User.create([userData], { session }); // built in static method
 
     if (!newUser.length) {
-      throw new AppError(500, "Failed To create user")
+      throw new AppError(500, 'Failed To create user');
     }
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id;
 
     const newStudent = await Student.create([studentData], { session });
     if (!newStudent.length) {
-      throw new AppError(500, "Failed To create Student")
+      throw new AppError(500, 'Failed To create Student');
     }
 
     await session.commitTransaction();
     await session.endSession();
     return newStudent;
-
   } catch (err) {
-    await session.abortTransaction()
-    await session.endSession()
-
+    await session.abortTransaction();
+    await session.endSession();
   }
-
 };
 export const UserServices = {
   createStudentIntoDB,
