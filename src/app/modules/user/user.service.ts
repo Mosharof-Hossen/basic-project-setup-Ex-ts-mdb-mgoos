@@ -1,11 +1,12 @@
+import mongoose from 'mongoose';
 import config from '../../config';
-import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { generateStudentId } from './user.utils';
+import AppError from '../../errors/AppError';
 
 const createStudentIntoDB = async (
   passwordData: string,
@@ -19,17 +20,36 @@ const createStudentIntoDB = async (
     studentData.admissionSemester,
   );
 
-  userData.id = await generateStudentId(admissionSemester);
+  const session = await mongoose.startSession()
 
-  const newUser = await User.create(userData); // built in static method
+  try {
+    session.startTransaction()
 
-  if (Object.keys(newUser).length) {
-    studentData.id = newUser.id;
-    studentData.user = newUser._id;
+    userData.id = await generateStudentId(admissionSemester);
 
-    const newStudent = await Student.create(studentData);
+    const newUser = await User.create([userData], { session }); // built in static method
+
+    if (!newUser.length) {
+      throw new AppError(500, "Failed To create user")
+    }
+    studentData.id = newUser[0].id;
+    studentData.user = newUser[0]._id;
+
+    const newStudent = await Student.create([studentData], { session });
+    if (!newStudent.length) {
+      throw new AppError(500, "Failed To create Student")
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
     return newStudent;
+
+  } catch (err) {
+    await session.abortTransaction()
+    await session.endSession()
+
   }
+
 };
 export const UserServices = {
   createStudentIntoDB,
