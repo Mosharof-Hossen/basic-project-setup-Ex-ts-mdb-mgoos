@@ -42,7 +42,7 @@ const updateAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Retrieve single academic Semester successfully',
+    message: 'Updated academic Semester successfully',
     data: result,
   });
 });

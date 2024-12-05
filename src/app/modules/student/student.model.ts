@@ -90,7 +90,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 //const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
-    id: {type: String , unique:true},
+    id: { type: String, unique: true },
     user: {
       type: Schema.Types.ObjectId,
       required: [true, 'User is required'],
@@ -155,6 +155,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: Schema.Types.ObjectId,
       ref: 'AcademicSemester',
     },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
+
   },
   {
     toJSON: {
