@@ -86,8 +86,6 @@ const createStudentValidationSchema = z.object({
   }),
 });
 
-
-
 // UserName Schema
 const updateUserNameSchema = z.object({
   firstName: z
@@ -130,35 +128,37 @@ const updateLocalGuardianSchema = z.object({
 const updateStudentValidationSchema = z.object({
   body: z.object({
     // password: z.string().max(20).optional(),
-    student: z.object({
-      id: z.string().optional(),
-      name: updateUserNameSchema.optional(),
-      gender: z
-        .enum(['female', 'male'], {
-          errorMap: () => ({
-            message: 'Gender must be either "female" or "male"',
-          }),
-        })
-        .optional(),
-      dateOfBirth: z.string().optional(),
-      email: z.string().email('Invalid email address').optional(),
-      contactNo: z.string().optional(),
-      emergencyContactNo: z.string().optional(),
-      bloodGroup: z
-        .enum(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
-        .optional(),
-      presentAddress: z.string().optional(),
-      permanentAddress: z.string().optional(),
-      guardian: updateGuardianSchema.optional(),
-      localGuardian: updateLocalGuardianSchema.optional(),
-      profileImg: z.string().optional(),
-      admissionSemester: z.string().optional(),
-      academicDepartment: z.string().optional(),
-    }).optional(),
+    student: z
+      .object({
+        id: z.string().optional(),
+        name: updateUserNameSchema.optional(),
+        gender: z
+          .enum(['female', 'male'], {
+            errorMap: () => ({
+              message: 'Gender must be either "female" or "male"',
+            }),
+          })
+          .optional(),
+        dateOfBirth: z.string().optional(),
+        email: z.string().email('Invalid email address').optional(),
+        contactNo: z.string().optional(),
+        emergencyContactNo: z.string().optional(),
+        bloodGroup: z
+          .enum(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
+          .optional(),
+        presentAddress: z.string().optional(),
+        permanentAddress: z.string().optional(),
+        guardian: updateGuardianSchema.optional(),
+        localGuardian: updateLocalGuardianSchema.optional(),
+        profileImg: z.string().optional(),
+        admissionSemester: z.string().optional(),
+        academicDepartment: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 
 export const studentValidations = {
   createStudentValidationSchema,
-  updateStudentValidationSchema
+  updateStudentValidationSchema,
 };
