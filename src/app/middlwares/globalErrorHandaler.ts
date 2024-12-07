@@ -6,6 +6,7 @@ import { TErrorSource } from '../interface/error';
 import config from '../config';
 import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
+import handleCastError from '../errors/handleCastError';
 
 const globalErrorHandler = (
   err: any,
@@ -31,6 +32,11 @@ const globalErrorHandler = (
     statusCode = simplifiedError?.statusCode;
   } else if (err?.name === "ValidationError") {
     const simplifiedError = handleValidationError(err);
+    errorSources = simplifiedError?.errorSources;
+    message = simplifiedError?.message;
+    statusCode = simplifiedError?.statusCode;
+  } else if (err?.name === "CastError") {
+    const simplifiedError = handleCastError(err);
     errorSources = simplifiedError?.errorSources;
     message = simplifiedError?.message;
     statusCode = simplifiedError?.statusCode;
