@@ -29,7 +29,7 @@ process.on("unhandledRejection", () => {
       process.exit(1);
     })
   }
-  process.exit(1);
+  // process.exit(1);
 })
 
 process.on("uncaughtException", () => {

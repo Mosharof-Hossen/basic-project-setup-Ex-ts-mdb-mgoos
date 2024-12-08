@@ -168,6 +168,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     toJSON: {
       virtuals: true,
     },
+    timestamps: true
   },
 );
 
@@ -178,7 +179,7 @@ studentSchema.statics.isUserExist = async function (id: string) {
 };
 
 studentSchema.virtual('fullName').get(function () {
-  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+  return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
 });
 
 // studentSchema.methods.isUserExist = async function (id: string | null) {
