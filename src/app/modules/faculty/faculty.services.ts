@@ -3,13 +3,32 @@ import { TFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
 import AppError from '../../errors/AppError';
 import { User } from '../user/user.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const getSingleFaculty = async (id: string) => {
     const result = await Faculty.findById(id).populate('academicDepartment');
     return result;
 };
-const getAllFaculties = async () => {
-    const result = await Faculty.find().populate('academicDepartment');
+const getAllFaculties = async (query: Record<string, unknown>) => {
+    const FacultySearchableFields = [
+        'email',
+        'id',
+        'contactNo',
+        'emergencyContactNo',
+        'name.firstName',
+        'name.lastName',
+        'name.middleName',
+    ];
+    const facultyQuery = new QueryBuilder(
+        Faculty.find().populate('academicDepartment'),
+        query
+    )
+        .search(FacultySearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const result = await facultyQuery.modelQuery;
     return result;
 };
 
