@@ -60,7 +60,7 @@ export const facultyId = async () => {
   if (lastFacultyId) {
     currentId = lastFacultyId;
   }
-  let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
   incrementId = `F-${incrementId}`;
   return incrementId;
 };
