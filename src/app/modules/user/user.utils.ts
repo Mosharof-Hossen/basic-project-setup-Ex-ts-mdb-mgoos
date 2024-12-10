@@ -55,10 +55,14 @@ export const findLastFacultyId = async () => {
 
 // F-0001
 export const facultyId = async () => {
-  const currentId = (0).toString();
+  let currentId = (0).toString();
   const lastFacultyId = await findLastFacultyId();
-
   if (lastFacultyId) {
     currentId = lastFacultyId;
   }
+  console.log({ lastFacultyId }, { currentId });
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
+  incrementId = `F-${incrementId}`;
+  return incrementId;
+
 };

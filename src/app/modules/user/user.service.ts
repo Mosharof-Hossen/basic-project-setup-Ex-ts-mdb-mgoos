@@ -5,7 +5,7 @@ import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
-import { generateStudentId } from './user.utils';
+import { facultyId, generateStudentId } from './user.utils';
 import AppError from '../../errors/AppError';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 import { Faculty } from '../faculty/faculty.model';
@@ -69,7 +69,7 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
   try {
     session.startTransaction();
 
-    userData.id = 'F-0001';
+    userData.id = await facultyId();
 
     const newUser = await User.create([userData], { session });
 
