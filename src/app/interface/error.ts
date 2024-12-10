@@ -7,4 +7,4 @@ export type TReturnErrorResponse = {
   statusCode: number;
   message: string;
   errorSources: TErrorSource;
-}
+};

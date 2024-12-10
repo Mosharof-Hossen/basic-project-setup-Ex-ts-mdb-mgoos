@@ -6,7 +6,7 @@ import { TStudent } from './student.interface';
 import QueryBuilder from '../../builder/QueryBuilder';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  const searchableFields = ["email", "name.firstName", "presentAddress"]
+  const searchableFields = ['email', 'name.firstName', 'presentAddress'];
   const studentQuery = new QueryBuilder(
     Student.find()
       .populate('admissionSemester')
@@ -17,19 +17,17 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
           path: 'academicFaculty',
         },
       }),
-    query
+    query,
   )
     .search(searchableFields)
     .filter()
     .sort()
     .paginate()
-    .fields()
+    .fields();
 
   const result = await studentQuery.modelQuery;
   return result;
-
 };
-
 
 const getSingleStudentFromDB = async (id: string) => {
   const result = await Student.findById(id)
@@ -43,6 +41,7 @@ const getSingleStudentFromDB = async (id: string) => {
     });
   return result;
 };
+
 const deleteStudentFromDB = async (id: string) => {
   const session = await mongoose.startSession();
 

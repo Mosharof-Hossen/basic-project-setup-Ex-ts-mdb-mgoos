@@ -19,25 +19,24 @@ const globalErrorHandler = (
   let statusCode = 500;
   let message = 'Something went wrong';
 
-  let errorSources: TErrorSource = [{
-    path: "",
-    message: 'Something went wrong'
-  }]
-
-
-
+  let errorSources: TErrorSource = [
+    {
+      path: '',
+      message: 'Something went wrong',
+    },
+  ];
 
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
     errorSources = simplifiedError?.errorSources;
     message = simplifiedError?.message;
     statusCode = simplifiedError?.statusCode;
-  } else if (err?.name === "ValidationError") {
+  } else if (err?.name === 'ValidationError') {
     const simplifiedError = handleValidationError(err);
     errorSources = simplifiedError?.errorSources;
     message = simplifiedError?.message;
     statusCode = simplifiedError?.statusCode;
-  } else if (err?.name === "CastError") {
+  } else if (err?.name === 'CastError') {
     const simplifiedError = handleCastError(err);
     errorSources = simplifiedError?.errorSources;
     message = simplifiedError?.message;
@@ -48,28 +47,29 @@ const globalErrorHandler = (
     message = simplifiedError?.message;
     statusCode = simplifiedError?.statusCode;
   } else if (err instanceof AppError) {
-    errorSources = [{
-      path: "",
-      message: err?.message
-    }];
+    errorSources = [
+      {
+        path: '',
+        message: err?.message,
+      },
+    ];
     message = err?.message;
     statusCode = err?.statusCode;
   } else if (err instanceof Error) {
-    errorSources = [{
-      path: "",
-      message: err?.message
-    }];
+    errorSources = [
+      {
+        path: '',
+        message: err?.message,
+      },
+    ];
     message = err?.message;
   }
-
-
-
 
   return res.status(statusCode).json({
     success: false,
     message: message,
     errorSources,
-    stack: config.node_env === "development" ? err?.stack : null,
+    stack: config.node_env === 'development' ? err?.stack : null,
     // err
   });
 };
