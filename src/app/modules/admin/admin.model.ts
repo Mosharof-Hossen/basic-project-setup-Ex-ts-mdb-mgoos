@@ -33,7 +33,6 @@ const adminSchema = new Schema<TAdmin>({
   designation: {
     type: String,
     required: [true, 'Designation is required'],
-    unique: true,
   },
   gender: {
     type: String,
