@@ -1,8 +1,11 @@
+import mongoose, { startSession } from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { TAdmin } from './admin.interface';
 import { Admin } from './admin.model';
+import AppError from '../../errors/AppError';
+import { User } from '../user/user.model';
 
-const getAllAdminsFromBd = async (query: Record<string, unknown>) => {
+const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
     const adminSearchableFields = [
         'email',
         'id',
@@ -23,11 +26,12 @@ const getAllAdminsFromBd = async (query: Record<string, unknown>) => {
     return result;
 };
 
-const getSingleAdminFromBD = async (id: string) => {
+const getSingleAdminFromDB = async (id: string) => {
     const result = await Admin.findById(id);
     return result;
 }
-const updateAdminIntoBD = async (id: string, payload: Partial<TAdmin>) => {
+
+const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
     const { name, ...remainingAdminData } = payload;
     const modifiedUpdateData: Record<string, unknown> = {
         ...remainingAdminData
@@ -41,8 +45,46 @@ const updateAdminIntoBD = async (id: string, payload: Partial<TAdmin>) => {
     return result;
 }
 
+const deleteAdminFromDB = async (id: string) => {
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
+
+        const deleteAdmin = await Admin.findByIdAndUpdate(
+            id,
+            { isDeleted: true },
+            { new: true, session }
+        )
+
+        if (!deleteAdmin) {
+            throw new AppError(400, "Failed to delete admin.")
+        }
+
+        const userId = deleteAdmin.user;
+        const deletedUser = await User.findByIdAndUpdate(
+            userId,
+            { isDeleted: true },
+            { new: true, session }
+        )
+        if (!deletedUser) {
+            throw new AppError(400, "Failed to delete User.")
+        }
+
+        await session.commitTransaction();
+        await session.endSession();
+
+        return deleteAdmin;
+
+    } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw new Error(err)
+    }
+}
+
 export const adminServices = {
-    getAllAdminsFromBd,
-    getSingleAdminFromBD,
-    updateAdminIntoBD
+    getAllAdminsFromDB,
+    getSingleAdminFromDB,
+    updateAdminIntoDB,
+    deleteAdminFromDB
 }

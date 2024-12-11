@@ -3,7 +3,7 @@ import sendResponse from "../../utils/sendResponse";
 import { adminServices } from "./admin.services";
 
 const getAllAdmins = catchAsync(async (req, res) => {
-    const result = await adminServices.getAllAdminsFromBd(req.query);
+    const result = await adminServices.getAllAdminsFromDB(req.query);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -12,7 +12,7 @@ const getAllAdmins = catchAsync(async (req, res) => {
     })
 })
 const getSingleAdmins = catchAsync(async (req, res) => {
-    const result = await adminServices.getSingleAdminFromBD(req.params.id);
+    const result = await adminServices.getSingleAdminFromDB(req.params.id);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -21,7 +21,7 @@ const getSingleAdmins = catchAsync(async (req, res) => {
     })
 })
 const updateAdmin = catchAsync(async (req, res) => {
-    const result = await adminServices.updateAdminIntoBD(req.params.id, req.body.admin);
+    const result = await adminServices.updateAdminIntoDB(req.params.id, req.body.admin);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -29,9 +29,19 @@ const updateAdmin = catchAsync(async (req, res) => {
         data: result,
     })
 })
+const deleteAdmin = catchAsync(async (req, res) => {
+    const result = await adminServices.deleteAdminFromDB(req.params.id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "admin deleted successfully",
+        data: result,
+    })
+})
 
 export const adminControllers = {
     getAllAdmins,
     getSingleAdmins,
-    updateAdmin
+    updateAdmin,
+    deleteAdmin
 }
