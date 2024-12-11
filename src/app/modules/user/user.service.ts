@@ -100,8 +100,8 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
 
 const createAdminIntoBD = async (password: string, payload: TAdmin) => {
   const userData: Partial<TUser> = {};
-  userData.password = password || config.default_password as string;
-  userData.role = "admin";
+  userData.password = password || (config.default_password as string);
+  userData.role = 'admin';
 
   const session = await startSession();
   try {
@@ -111,7 +111,7 @@ const createAdminIntoBD = async (password: string, payload: TAdmin) => {
     const newUser = await User.create([userData], { session });
 
     if (!newUser.length) {
-      throw new AppError(400, "Failed to create user");
+      throw new AppError(400, 'Failed to create user');
     }
 
     payload.id = newUser[0].id;
@@ -120,20 +120,18 @@ const createAdminIntoBD = async (password: string, payload: TAdmin) => {
     const newAdmin = await Admin.create([payload], { session });
 
     if (!newAdmin.length) {
-      throw new AppError(400, "Failed to create admin")
+      throw new AppError(400, 'Failed to create admin');
     }
 
-    await session.commitTransaction()
+    await session.commitTransaction();
     await session.endSession();
 
-    return newAdmin
-
+    return newAdmin;
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(400, err)
+    throw new AppError(400, err);
   }
-
 };
 
 export const UserServices = {
