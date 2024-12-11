@@ -9,6 +9,7 @@ import { facultyId, generateStudentId } from './user.utils';
 import AppError from '../../errors/AppError';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 import { Faculty } from '../faculty/faculty.model';
+import { TAdmin } from '../admin/admin.interface';
 
 const createStudentIntoDB = async (
   passwordData: string,
@@ -95,7 +96,14 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
     throw new AppError(500, err);
   }
 };
+
+const createAdminIntoBD = async (password: string, payload: TAdmin) => {
+  console.log(password, payload);
+  return '';
+};
+
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
+  createAdminIntoBD,
 };
