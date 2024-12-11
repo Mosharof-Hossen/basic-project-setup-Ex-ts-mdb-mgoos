@@ -22,7 +22,12 @@ const getAllAdminsFromBd = async (query: Record<string, unknown>) => {
     return result;
 };
 
+const getSingleAdminFromBD = async (id: string) => {
+    const result = await Admin.findById(id);
+    return result;
+}
 
-export const  adminServices = {
-    getAllAdminsFromBd
+export const adminServices = {
+    getAllAdminsFromBd,
+    getSingleAdminFromBD
 }
