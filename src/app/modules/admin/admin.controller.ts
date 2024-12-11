@@ -16,12 +16,22 @@ const getSingleAdmins = catchAsync(async (req, res) => {
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Admins are retrieved successfully",
+        message: "Admin is retrieved successfully",
+        data: result,
+    })
+})
+const updateAdmin = catchAsync(async (req, res) => {
+    const result = await adminServices.updateAdminIntoBD(req.params.id, req.body.admin);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "update admin is retrieved successfully",
         data: result,
     })
 })
 
 export const adminControllers = {
     getAllAdmins,
-    getSingleAdmins
+    getSingleAdmins,
+    updateAdmin
 }
