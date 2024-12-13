@@ -33,6 +33,10 @@ const courseSchema = new Schema<TCourse>({
     trim: true,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   preRequisiteCourse: [preRequisiteCourseSchema],
 });
 

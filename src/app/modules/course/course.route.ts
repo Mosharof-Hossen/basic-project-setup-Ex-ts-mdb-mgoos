@@ -10,8 +10,13 @@ router.post(
   dataValidator(CourseValidation.createCourseValidationSchema),
   courseControllers.createCourse,
 );
+router.patch(
+  '/:id',
+  dataValidator(CourseValidation.updateCourseValidationSchema),
+  courseControllers.updateCourse,
+);
 router.get('/', courseControllers.getAllCourses);
 router.get('/:id', courseControllers.getSingleCourse);
-router.delete('/:d', courseControllers.deleteCourse);
+router.delete('/:id', courseControllers.deleteCourse);
 
 export const CourseRouter = router;
