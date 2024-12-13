@@ -44,7 +44,23 @@ const deleteCourse = catchAsync(async (req, res) => {
     });
 });
 const updateCourse = catchAsync(async (req, res) => {
-    const result = await CourseServices.updateCourseIntoDB(req.params.id, req.body);
+    const result = await CourseServices.updateCourseIntoDB(
+        req.params.id,
+        req.body,
+    );
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Course is updated successfully',
+        data: result,
+    });
+});
+const assignFaculties = catchAsync(async (req, res) => {
+    const result = await CourseServices.updateCourseIntoDB(
+        req.params.id,
+        req.body.faculties,
+    );
 
     sendResponse(res, {
         statusCode: 200,
@@ -59,5 +75,6 @@ export const courseControllers = {
     getAllCourses,
     getSingleCourse,
     deleteCourse,
-    updateCourse
+    updateCourse,
+    assignFaculties
 };
