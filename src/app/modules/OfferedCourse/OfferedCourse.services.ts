@@ -8,7 +8,7 @@ import { TOfferedCourse } from "./OfferedCourse.interface";
 import { OfferedCourse } from "./OfferedCourse.model";
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
-    const { semesterRegistration, academicFaculty, academicDepartment, course, faculty, section } = payload
+    const { semesterRegistration, academicFaculty, academicDepartment, course, faculty, section, days, startTime, endTime } = payload
 
     const isSemesterRegistrationExists = await SemesterRegistration.findById(semesterRegistration);
     if (!isSemesterRegistrationExists) {
@@ -55,8 +55,31 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
         throw new AppError(400, `This offer with same section is already exits`)
     }
 
-    const result = await OfferedCourse.create({ ...payload, academicSemester });
-    return result;
+    // check unique faculty
+    const assignedSchedules = await OfferedCourse.find({
+        semesterRegistration,
+        faculty,
+        days: { $in: days }
+    }).select("days startTime endTime")
+
+    const newSchedule = {
+        days, startTime, endTime
+    }
+    assignedSchedules.forEach((schedule) => {
+        const existingStartTime = new Date(`1970-01-01T${schedule.startTime}`);
+        const existingEndTime = new Date(`1970-01-01T${schedule.endTime}`);
+        const newStartTime = new Date(`1970-01-01T${newSchedule.startTime}`);
+        const newEndTime = new Date(`1970-01-01T${newSchedule.endTime}`);
+
+        if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
+            throw new AppError(400, `This faculty is not available at that time! Choose other time or date.`)
+        }
+    })
+
+
+
+    // const result = await OfferedCourse.create({ ...payload, academicSemester });
+    return null;
 }
 
 export const OfferedCourseServices = {
