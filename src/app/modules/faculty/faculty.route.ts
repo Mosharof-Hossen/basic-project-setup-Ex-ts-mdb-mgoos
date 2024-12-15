@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { FacultyController } from './faculty.controller';
 import dataValidator from '../../middlwares/dataValidator';
 import { FacultyValidations } from './faculty.validation';
+import auth from '../../middlwares/auth';
 
 const router = Router();
 
@@ -12,6 +13,6 @@ router.patch(
   dataValidator(FacultyValidations.updateFacultyValidationSchema),
   FacultyController.updateFaculty,
 );
-router.get('/', FacultyController.getAllFaculties);
+router.get('/', auth(), FacultyController.getAllFaculties);
 
 export const FacultyRouter = router;
