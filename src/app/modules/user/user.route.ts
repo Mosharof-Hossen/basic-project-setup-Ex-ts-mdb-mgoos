@@ -18,11 +18,13 @@ router.post(
 );
 router.post(
   '/create-faculty',
+  auth(USER_ROLE.admin as TUserRole),
   dataValidator(FacultyValidations.createFacultyValidationSchema),
   UserController.createFaculty,
 );
 router.post(
   '/create-admin',
+  // auth(USER_ROLE.admin as TUserRole),
   dataValidator(AdminValidations.createAdminSchema),
   UserController.createAdmin,
 );
