@@ -72,7 +72,40 @@ const changePassword = async (userData: JwtPayload, payload: TChangePassword) =>
     return null;
 }
 
+const refreshToken = async (token: string) => {
+    if (!token) {
+        throw new AppError(401, "You are not authorized ")
+    }
+    const decode = jwt.verify(token, config.jwt_refresh_secret as string) as JwtPayload;
+    const role = decode.role;
+
+    const user = await User.isUserExistByCustomId(decode.userId);
+    if (!user) {
+        throw new AppError(400, "This user is not found!")
+    }
+    if (user?.isDeleted) {
+        throw new AppError(400, "This user is deleted!")
+    }
+    if (user?.status === "blocked") {
+        throw new AppError(400, "This user is blocked!")
+    }
+
+    if (user.passwordChangeAt && await User.isJWTIssuedBeforePasswordChange(user.passwordChangeAt, decode.iat as number)) {
+        throw new AppError(400, "You are not authorized.")
+    }
+
+    const jwtPayload = {
+        userId: user.id,
+        role: user.role
+    }
+
+    const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '1d' })
+
+    return { accessToken };
+}
+
 export const AuthServices = {
     loginUser,
-    changePassword
+    changePassword,
+    refreshToken
 }

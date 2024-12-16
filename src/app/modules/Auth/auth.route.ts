@@ -18,5 +18,11 @@ router.post(
     dataValidator(AuthValidation.changePasswordValidationSchema),
     AuthController.changePassword
 )
+router.post(
+    '/refresh-token',
+    // auth(USER_ROLE.student, USER_ROLE.admin, USER_ROLE.faculty),
+    dataValidator(AuthValidation.refreshTokenValidationSchema),
+    AuthController.refreshToken
+)
 
 export const AuthRouter = router;

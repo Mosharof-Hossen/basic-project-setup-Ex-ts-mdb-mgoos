@@ -3,8 +3,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { StudentRoute } from './app/modules/student/student.route';
-import { UserRoutes } from './app/modules/user/user.route';
+import cookieParser from 'cookie-parser';
 import globalErrorHandler from './app/middlwares/globalErrorHandaler';
 import notFound from './app/middlwares/notFound';
 import router from './routers';
@@ -13,7 +12,11 @@ const app = express();
 
 // parser
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser())
+app.use(cors({
+  origin:['http://localhost:2000']
+}));
+
 
 // application routers
 app.use('/api/v1', router);
