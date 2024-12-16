@@ -2,9 +2,14 @@ import { JwtPayload } from "jsonwebtoken";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.services";
+import config from "../../config";
 
 const loginUser = catchAsync(async (req, res) => {
     const result = await AuthServices.loginUser(req.body);
+    res.cookie("refreshToken", result.refreshToken, {
+        secure: config.node_env === 'production',
+        httpOnly: true
+    })
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -15,6 +20,8 @@ const loginUser = catchAsync(async (req, res) => {
 const changePassword = catchAsync(async (req, res) => {
     // console.log(req.user, req.body);
     const result = await AuthServices.changePassword(req.user as JwtPayload, req.body);
+    
+
     sendResponse(res, {
         statusCode: 200,
         success: true,

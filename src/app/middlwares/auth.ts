@@ -28,7 +28,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
         }
 
         if (user.passwordChangeAt && await User.isJWTIssuedBeforePasswordChange(user.passwordChangeAt, decode.iat as number)) {
-            throw new AppError(400, "You are not authorized ssssss")
+            throw new AppError(400, "You are not authorized.")
         }
 
 

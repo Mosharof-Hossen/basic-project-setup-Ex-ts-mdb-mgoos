@@ -56,9 +56,7 @@ userSchema.statics.isPasswordMatched = async function (plainTextPassword: string
 }
 
 userSchema.statics.isJWTIssuedBeforePasswordChange = async function (passwordChangeAt: Date, jwtIssuedTimeAt: number) {
-  const passwordChangeTime = new Date(passwordChangeAt).getTime() / 1000;
-  console.log(passwordChangeTime , jwtIssuedTimeAt);
-  console.log(passwordChangeTime > jwtIssuedTimeAt);
+  const passwordChangeTime = new Date(passwordChangeAt).getTime() / 1000; 
   return passwordChangeTime > jwtIssuedTimeAt;
 }
 

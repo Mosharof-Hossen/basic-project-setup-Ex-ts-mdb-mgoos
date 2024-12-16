@@ -7,7 +7,6 @@ import bcrypt from "bcrypt";
 
 const loginUser = async (payload: TLoginUser) => {
     const user = await User.isUserExistByCustomId(payload.id);
-    console.log(user);
     if (!user) {
         throw new AppError(400, "This user is not found!")
     }
@@ -28,10 +27,12 @@ const loginUser = async (payload: TLoginUser) => {
         role: user.role
     }
 
-    const token = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '10d' })
+    const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '1d' })
+    const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_secret as string, { expiresIn: '365d' })
 
     return {
-        token,
+        accessToken,
+        refreshToken,
         needsPasswordChange: user?.needsPasswordChange
     };
 }
