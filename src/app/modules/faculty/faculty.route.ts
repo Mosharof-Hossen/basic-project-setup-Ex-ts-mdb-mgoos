@@ -3,6 +3,7 @@ import { FacultyController } from './faculty.controller';
 import dataValidator from '../../middlwares/dataValidator';
 import { FacultyValidations } from './faculty.validation';
 import auth from '../../middlwares/auth';
+import { USER_ROLE } from '../user/user.constant';
 
 const router = Router();
 
@@ -13,6 +14,6 @@ router.patch(
   dataValidator(FacultyValidations.updateFacultyValidationSchema),
   FacultyController.updateFaculty,
 );
-router.get('/', auth(), FacultyController.getAllFaculties);
+router.get('/', auth(USER_ROLE.admin, USER_ROLE.faculty), FacultyController.getAllFaculties);
 
 export const FacultyRouter = router;

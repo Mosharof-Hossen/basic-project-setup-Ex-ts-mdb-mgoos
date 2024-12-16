@@ -18,7 +18,7 @@ router.post(
 );
 router.post(
   '/create-faculty',
-  auth(USER_ROLE.admin as TUserRole),
+  // auth(USER_ROLE.admin as TUserRole),
   dataValidator(FacultyValidations.createFacultyValidationSchema),
   UserController.createFaculty,
 );

@@ -11,9 +11,11 @@ export interface TUser {
   role: 'admin' | 'student' | 'faculty';
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
+  passwordChangeAt?: Date;
 };
 
 export interface UserModel extends Model<TUser> {
   isUserExistByCustomId(id: string): Promise<TUser>;
   isPasswordMatched(plainTextPassword: string, hashedPassword: string): boolean;
+  isJWTIssuedBeforePasswordChange(passwordChangeAt: Date, jwtIssuedTimeAt: number): boolean;
 } 
