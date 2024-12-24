@@ -121,10 +121,10 @@ const forgetPassword = async (id: string) => {
         role: user.role
     }
 
-    const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '10min' })
+    const resetToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '10min' })
 
 
-    const resetLink = `http://localhost:2000?id=${user.id}&token=${accessToken}`
+    const resetLink = `http://localhost:2000?id=${user.id}&token=${resetToken}`
     return resetLink
 }
 

@@ -5,7 +5,8 @@ import bcript, { compare } from 'bcrypt';
 
 const userSchema = new Schema<TUser, UserModel>(
   {
-    id: { type: String, required: true },
+    id: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: {
       type: String,
       required: true,
@@ -38,8 +39,7 @@ const userSchema = new Schema<TUser, UserModel>(
 );
 
 userSchema.pre('save', async function (next) {
-  const user = this;
-  user.password = await bcript.hash(user.password, Number(config.salt_round));
+  this.password = await bcript.hash(this.password, Number(config.salt_round));
   next();
 });
 
@@ -56,7 +56,7 @@ userSchema.statics.isPasswordMatched = async function (plainTextPassword: string
 }
 
 userSchema.statics.isJWTIssuedBeforePasswordChange = async function (passwordChangeAt: Date, jwtIssuedTimeAt: number) {
-  const passwordChangeTime = new Date(passwordChangeAt).getTime() / 1000; 
+  const passwordChangeTime = new Date(passwordChangeAt).getTime() / 1000;
   return passwordChangeTime > jwtIssuedTimeAt;
 }
 
