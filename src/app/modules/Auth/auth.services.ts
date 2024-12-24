@@ -2,8 +2,8 @@ import config from "../../config";
 import AppError from "../../errors/AppError";
 import { User } from "../user/user.model";
 import { TChangePassword, TLoginUser } from "./auth.interface";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import jwt, { JwtPayload, verify } from "jsonwebtoken";
+import bcrypt, { hash } from "bcrypt";
 import { sendEmail } from "../../utils/sendEmail";
 
 const loginUser = async (payload: TLoginUser) => {
@@ -143,8 +143,23 @@ const resetPassword = async (payload: { id: string, newPassword: string }, token
         throw new AppError(400, "This user is blocked!")
     }
 
+    const decode = verify(token, config.jwt_access_secret as string) as JwtPayload;
 
-
+    if (user.id !== decode.userId) {
+        throw new AppError(400, "You are not authorized.")
+    }
+    const newHashPassword = await hash(payload.newPassword, Number(config.salt_round));
+    await User.findOneAndUpdate(
+        {
+            id: user.id,
+            role: user.role
+        },
+        {
+            password: newHashPassword,
+            needsPasswordChange: false,
+            passwordChangeAt: new Date()
+        }
+    )
 }
 
 export const AuthServices = {
