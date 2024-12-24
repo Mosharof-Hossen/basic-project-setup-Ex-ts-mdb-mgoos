@@ -77,7 +77,7 @@ const refreshToken = async (token: string) => {
         throw new AppError(401, "You are not authorized ")
     }
     const decode = jwt.verify(token, config.jwt_refresh_secret as string) as JwtPayload;
-    const role = decode.role;
+    // const role = decode.role;
 
     const user = await User.isUserExistByCustomId(decode.userId);
     if (!user) {
@@ -104,8 +104,13 @@ const refreshToken = async (token: string) => {
     return { accessToken };
 }
 
+const forgetPassword = (id: string) => {
+
+}
+
 export const AuthServices = {
     loginUser,
     changePassword,
-    refreshToken
+    refreshToken,
+    forgetPassword
 }
