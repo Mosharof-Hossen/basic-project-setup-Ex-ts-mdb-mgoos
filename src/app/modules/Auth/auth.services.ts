@@ -122,7 +122,7 @@ const forgetPassword = async (id: string) => {
         role: user.role
     }
 
-    const resetToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '10min' })
+    const resetToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '30min' })
 
 
     const resetLink = `${config.localhost}?id=${user.id}&token=${resetToken}`
@@ -131,9 +131,26 @@ const forgetPassword = async (id: string) => {
     return resetLink
 }
 
+const resetPassword = async (payload: { id: string, newPassword: string }, token: string) => {
+    const user = await User.isUserExistByCustomId(payload?.id);
+    if (!user) {
+        throw new AppError(400, "This user is not found!")
+    }
+    if (user?.isDeleted) {
+        throw new AppError(400, "This user is deleted!")
+    }
+    if (user?.status === "blocked") {
+        throw new AppError(400, "This user is blocked!")
+    }
+
+
+
+}
+
 export const AuthServices = {
     loginUser,
     changePassword,
     refreshToken,
-    forgetPassword
+    forgetPassword,
+    resetPassword
 }

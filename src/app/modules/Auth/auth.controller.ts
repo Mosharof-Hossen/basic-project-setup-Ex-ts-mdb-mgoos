@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.services";
 import config from "../../config";
+import AppError from "../../errors/AppError";
 
 const loginUser = catchAsync(async (req, res) => {
     const result = await AuthServices.loginUser(req.body);
@@ -52,10 +53,25 @@ const forgetPassword = catchAsync(async (req, res) => {
         data: result
     })
 })
+const resetPassword = catchAsync(async (req, res) => {
+    const token = req.headers.authorization
+    if (!token) {
+        throw new AppError(401, "You are not authorized ")
+    }
+    const result = await AuthServices.resetPassword(req.body, token);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Password reset successfully",
+        data: result
+    })
+})
 
 export const AuthController = {
     loginUser,
     changePassword,
     refreshToken,
-    forgetPassword
+    forgetPassword,
+    resetPassword
 }
