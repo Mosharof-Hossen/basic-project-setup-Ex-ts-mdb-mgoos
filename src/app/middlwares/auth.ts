@@ -16,7 +16,6 @@ const auth = (...requiredRoles: TUserRole[]) => {
         const role = decode.role;
 
         const user = await User.isUserExistByCustomId(decode.userId);
-        console.log(user);
         if (!user) {
             throw new AppError(400, "This user is not found!")
         }

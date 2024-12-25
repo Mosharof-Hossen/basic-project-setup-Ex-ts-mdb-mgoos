@@ -43,7 +43,6 @@ const updateFacultyInDB = async (id: string, payload: Partial<TFaculty>) => {
       modifiedUpdateData[`name.${key}`] = value;
     }
   }
-  console.log(modifiedUpdateData);
   const result = await Faculty.findByIdAndUpdate(id, modifiedUpdateData, {
     new: true,
     runValidators: true,

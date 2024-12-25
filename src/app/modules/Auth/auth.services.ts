@@ -40,7 +40,6 @@ const loginUser = async (payload: TLoginUser) => {
 
 const changePassword = async (userData: JwtPayload, payload: TChangePassword) => {
     const user = await User.isUserExistByCustomId(userData.userId);
-    console.log(user);
     if (!user) {
         throw new AppError(400, "This user is not found!")
     }

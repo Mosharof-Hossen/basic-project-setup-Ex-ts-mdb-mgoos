@@ -11,5 +11,7 @@ export default {
   node_env: process.env.NODE_ENV,
   jwt_access_secret: process.env.JWT_ACCESS_SECRET,
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
-  localhost: process.env.LOCAL_HOST
+  localhost: process.env.LOCAL_HOST,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET
 };

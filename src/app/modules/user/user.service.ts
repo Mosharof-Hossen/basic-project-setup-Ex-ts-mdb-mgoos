@@ -13,8 +13,10 @@ import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { USER_ROLE } from './user.constant';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
 const createStudentIntoDB = async (
+  file: unknown,
   passwordData: string,
   studentData: TStudent,
 ) => {
@@ -34,6 +36,13 @@ const createStudentIntoDB = async (
 
     userData.id = await generateStudentId(admissionSemester);
 
+    // send image to cloudinary.........
+    const imageName = `${userData.id}${studentData?.name.firstName}`;
+    const path = file?.path;
+    const profileImage = await sendImageToCloudinary(imageName, path)
+    console.log({ profileImage });
+
+
     const newUser = await User.create([userData], { session }); // built in static method
 
     if (!newUser.length) {
@@ -41,6 +50,7 @@ const createStudentIntoDB = async (
     }
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id;
+    studentData.profileImg = profileImage.secure_url;
 
     const newStudent = await Student.create([studentData], { session });
     if (!newStudent.length) {
