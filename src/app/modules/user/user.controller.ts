@@ -35,9 +35,29 @@ const createAdmin = catchAsync(async (req, res) => {
     message: 'Admin is created successfully.',
   });
 });
+const getMe = catchAsync(async (req, res) => {
+  const result = await UserServices.getMe(req.user);
+  sendResponse(res, {
+    data: result,
+    statusCode: 200,
+    success: true,
+    message: 'Cross verification done.',
+  });
+});
+const userStatusChange = catchAsync(async (req, res) => {
+  const result = await UserServices.userStatusChange(req.params.id, req.body);
+  sendResponse(res, {
+    data: result,
+    statusCode: 200,
+    success: true,
+    message: 'User status Changed.',
+  });
+});
 
 export const UserController = {
   createStudent,
   createFaculty,
   createAdmin,
+  getMe,
+  userStatusChange
 };

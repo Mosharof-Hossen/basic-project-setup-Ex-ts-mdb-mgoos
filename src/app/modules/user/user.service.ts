@@ -11,6 +11,8 @@ import { AcademicDepartment } from '../academicDepartment/academicDepartment.mod
 import { Faculty } from '../faculty/faculty.model';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
+import { JwtPayload } from 'jsonwebtoken';
+import { USER_ROLE } from './user.constant';
 
 const createStudentIntoDB = async (
   passwordData: string,
@@ -137,8 +139,32 @@ const createAdminIntoBD = async (password: string, payload: TAdmin) => {
   }
 };
 
+const getMe = async (user: JwtPayload) => {
+  const { userId, role } = user;
+  let result
+  if (role === USER_ROLE.admin) {
+    result = await Admin.findOne({ id: userId });
+  }
+  if (role === USER_ROLE.faculty) {
+    result = await Faculty.findOne({ id: userId });
+  }
+  if (role === USER_ROLE.student) {
+    result = await Student.findOne({ id: userId });
+  }
+
+  return result
+
+}
+
+const userStatusChange = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true });
+  return result;
+}
+
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
   createAdminIntoBD,
+  getMe,
+  userStatusChange
 };
