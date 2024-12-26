@@ -140,6 +140,8 @@ const updateOfferedCourseIntoDB = async (id: string, payload: Pick<TOfferedCours
     const result = await OfferedCourse.findByIdAndUpdate(id, payload, { new: true });
     return result;
 };
+
+
 export const OfferedCourseServices = {
     createOfferedCourseIntoDB,
     updateOfferedCourseIntoDB,
