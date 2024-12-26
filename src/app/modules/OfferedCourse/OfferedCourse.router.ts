@@ -15,5 +15,9 @@ router.patch(
   dataValidator(OfferedCourseValidation.updateOfferedCourseValidationSchema),
   OfferedCourseControllers.updateOfferedCourse,
 );
+router.get(
+  '/',
+  OfferedCourseControllers.getAllOfferedCourse,
+);
 
 export const OfferedCourseRouter = router;

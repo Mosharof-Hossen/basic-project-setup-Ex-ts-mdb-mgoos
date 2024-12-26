@@ -141,8 +141,18 @@ const updateOfferedCourseIntoDB = async (id: string, payload: Pick<TOfferedCours
     return result;
 };
 
-
+const getAllOfferedCourseFromDB = async () => {
+    const result = await OfferedCourse.find()
+    .populate("semesterRegistration")
+    .populate("academicSemester")
+    .populate("academicFaculty")
+    .populate("academicDepartment")
+    .populate("course")
+    .populate("faculty")
+    return result;
+}
 export const OfferedCourseServices = {
     createOfferedCourseIntoDB,
     updateOfferedCourseIntoDB,
+    getAllOfferedCourseFromDB
 };
