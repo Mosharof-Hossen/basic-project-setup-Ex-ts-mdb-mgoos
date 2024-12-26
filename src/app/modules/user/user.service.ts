@@ -40,7 +40,6 @@ const createStudentIntoDB = async (
     const imageName = `${userData.id}${studentData?.name.firstName}`;
     const path = file?.path;
     const profileImage = await sendImageToCloudinary(imageName, path)
-    console.log({ profileImage });
 
 
     const newUser = await User.create([userData], { session }); // built in static method
@@ -112,7 +111,7 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
   }
 };
 
-const createAdminIntoBD = async (password: string, payload: TAdmin) => {
+const createAdminIntoBD = async (file: unknown, password: string, payload: TAdmin) => {
   const userData: Partial<TUser> = {};
   userData.password = password || (config.default_password as string);
   userData.role = 'admin';
@@ -121,6 +120,9 @@ const createAdminIntoBD = async (password: string, payload: TAdmin) => {
   const session = await startSession();
   try {
     session.startTransaction();
+    const imageName = `${payload.id}${payload.name.firstName}`;
+    const path = file?.path;
+    const profileImage = await sendImageToCloudinary(imageName, path);
 
     userData.id = await adminId();
     const newUser = await User.create([userData], { session });
@@ -131,6 +133,7 @@ const createAdminIntoBD = async (password: string, payload: TAdmin) => {
 
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
+    payload.profileImage = profileImage.secure_url;
 
     const newAdmin = await Admin.create([payload], { session });
 

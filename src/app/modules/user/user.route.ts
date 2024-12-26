@@ -26,12 +26,18 @@ router.post(
 router.post(
   '/create-faculty',
   auth(USER_ROLE.admin as TUserRole),
-  dataValidator(FacultyValidations.createFacultyValidationSchema),
+  upload.single('file'),
+  // dataValidator(FacultyValidations.createFacultyValidationSchema),
   UserController.createFaculty,
 );
 router.post(
   '/create-admin',
   // auth(USER_ROLE.admin as TUserRole),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   dataValidator(AdminValidations.createAdminSchema),
   UserController.createAdmin,
 );

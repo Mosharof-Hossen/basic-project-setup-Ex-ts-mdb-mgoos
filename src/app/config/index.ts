@@ -13,5 +13,7 @@ export default {
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
   localhost: process.env.LOCAL_HOST,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
-  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+  node_mailer_pass: process.env.NODE_MAILER_PASS,
+  node_mailer_email: process.env.NODE_MAILER_EMAIL,
 };
