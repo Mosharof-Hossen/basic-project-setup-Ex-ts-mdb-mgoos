@@ -14,6 +14,7 @@ import { Admin } from '../admin/admin.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { USER_ROLE } from './user.constant';
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
+import { TFaculty } from '../faculty/faculty.interface';
 
 const createStudentIntoDB = async (
   file: unknown,
@@ -66,7 +67,7 @@ const createStudentIntoDB = async (
   }
 };
 
-const createFacultyIntoDB = async (password: string, payload: TStudent) => {
+const createFacultyIntoDB = async (file: unknown, password: string, payload: TFaculty) => {
   const userData: Partial<TUser> = {};
   userData.password = password || (config.default_password as string);
   userData.role = 'faculty';
@@ -83,6 +84,9 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
+    const imageName = `${payload.id}${payload.name.firstName}`;
+    const path = file?.path;
+    const profileImage = await sendImageToCloudinary(imageName, path);
 
     userData.id = await facultyId();
 
@@ -94,6 +98,7 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
 
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
+    payload.profileImage = profileImage?.secure_url;
 
     const newFaculty = await Faculty.create([payload], { session });
     if (!newFaculty.length) {
