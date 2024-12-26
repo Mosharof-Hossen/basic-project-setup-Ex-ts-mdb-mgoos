@@ -4,6 +4,8 @@ import { OfferedCourse } from "../OfferedCourse/OfferedCourse.model";
 import { Student } from "../student/student.model";
 import { TEnrollCourse } from "./enrollCourse.interface";
 import { EnrolledCourse } from "./enrollCourse.model";
+import { SemesterRegistration } from "../semesterRegistration/semesterRegistration.model";
+import { Course } from "../course/course.model";
 
 const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) => {
 
@@ -17,6 +19,11 @@ const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) 
     const student = await Student.findOne({ id: userId });
     if (!student) {
         throw new AppError(400, "Student not found.")
+    }
+
+    const course = await Course.findById(isOfferedCourseExists.course);
+    if (!course) {
+        throw new AppError(400, "Course Not Exists")
     }
 
     const isStudentAlreadyEnrolled = await EnrolledCourse.findOne({
@@ -33,6 +40,47 @@ const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) 
     }
     const session = await startSession();
 
+    const semesterRegistration = await SemesterRegistration.findById(
+        isOfferedCourseExists.semesterRegistration
+    ).select("maxCredit");
+    const enrollCourses = await EnrolledCourse.aggregate([
+        {
+            $match: {
+                semesterRegistration: isOfferedCourseExists.semesterRegistration,
+                student: student._id,
+            },
+        },
+        {
+            $lookup: {
+                from: "courses",
+                localField: "course",
+                foreignField: "_id",
+                as: "enrolledCourseData"
+            }
+        },
+        {
+            $unwind: "$enrolledCourseData"
+        },
+        {
+            $group: {
+                _id: null,
+                totalEnrolledCredits: { $sum: "$enrolledCourseData.credits" }
+            }
+        },
+        {
+            $project: { _id: 0 }
+        }
+    ])
+
+    const totalCredits = enrollCourses[0]?.totalEnrolledCredits || 0;
+    const maxCredit = semesterRegistration?.maxCredit
+
+
+    if (totalCredits && maxCredit && (totalCredits + course.credits) > maxCredit) {
+        throw new AppError(400, "You have exceeded maximum number of credits.")
+    }
+
+
     try {
         session.startTransaction();
 
@@ -46,8 +94,7 @@ const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) 
             course: isOfferedCourseExists.course,
             faculty: isOfferedCourseExists.faculty,
             student: student._id,
-
-
+            isEnrolled: true
         }], { session })
 
         if (!result) {

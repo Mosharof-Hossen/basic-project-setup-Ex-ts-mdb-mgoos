@@ -67,7 +67,10 @@ const enrollCourseModelSchema = new Schema<TEnrollCourse>({
         // required: true
         default: false
     },
-    courseMarks: courseMarksSchema,
+    courseMarks: {
+        type: courseMarksSchema,
+        default: {}
+    },
     grade: {
         type: String,
         enum: ["A", "B", "C", "D", "E", "F", "NA"],
