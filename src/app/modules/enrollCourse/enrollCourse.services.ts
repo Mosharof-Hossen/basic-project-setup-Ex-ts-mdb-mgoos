@@ -7,6 +7,7 @@ import { EnrolledCourse } from "./enrollCourse.model";
 import { SemesterRegistration } from "../semesterRegistration/semesterRegistration.model";
 import { Course } from "../course/course.model";
 import { Faculty } from "../faculty/faculty.model";
+import { calculateGradeAndPoints } from "./enrollCourse.utils";
 
 const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) => {
 
@@ -167,7 +168,6 @@ const updateEnrolledCourseMarks = async (facultyId: string, payload: Partial<TUp
             updateField[`courseMarks.${key}`] = value;
         }
     }
-    console.log({ updateField });
     const result = await EnrolledCourse.findByIdAndUpdate(
         isCourseBelongToFaculty._id,
         updateField,
@@ -175,8 +175,24 @@ const updateEnrolledCourseMarks = async (facultyId: string, payload: Partial<TUp
             new: true
         }
     )
+    if (!result?.courseMarks) {
+        throw new AppError(400, "Something wrong.")
+    }
+    if (courseMarks?.finalTerm) {
+        const { classTest1, classTest2, finalTerm, midTerm } = result.courseMarks;
+        const totalMarks = Math.ceil(classTest1 * .1 + midTerm * 0.3 + classTest2 * 0.1 + finalTerm * .5);
+        const courseResult = calculateGradeAndPoints(totalMarks);
+        const updatedResult =  await EnrolledCourse.findByIdAndUpdate(
+            isCourseBelongToFaculty._id,
+            { ...courseResult, isCompleted: true },
+            {
+                new: true
+            }
+        )
+        return updatedResult
 
-    return result
+    }
+
 }
 
 

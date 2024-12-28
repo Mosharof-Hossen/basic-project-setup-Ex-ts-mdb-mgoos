@@ -18,7 +18,7 @@ export type TUpdateCourseMarks = {
         finalTerm: number;
     }
 }
-export type TGrade = "A" | "B" | "C" | "D" | "E" | "F" | "NA";
+export type TGrade = "A" | "B" | "C" | "D" | "F" | "NA";
 
 export type TEnrollCourse = {
     semesterRegistration: Types.ObjectId;
