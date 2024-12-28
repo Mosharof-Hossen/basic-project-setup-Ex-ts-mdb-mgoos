@@ -2,7 +2,7 @@ import { startSession } from "mongoose";
 import AppError from "../../errors/AppError";
 import { OfferedCourse } from "../OfferedCourse/OfferedCourse.model";
 import { Student } from "../student/student.model";
-import { TEnrollCourse } from "./enrollCourse.interface";
+import { TEnrollCourse, TUpdateCourseMarks } from "./enrollCourse.interface";
 import { EnrolledCourse } from "./enrollCourse.model";
 import { SemesterRegistration } from "../semesterRegistration/semesterRegistration.model";
 import { Course } from "../course/course.model";
@@ -122,7 +122,28 @@ const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) 
 
 }
 
+const updateEnrolledCourseMarks = async (facultyId: string, payload: Partial<TUpdateCourseMarks>) => {
+    const { semesterRegistration, offeredCourse, student, courseMarks } = payload;
+    const isOfferedCourseExists = await OfferedCourse.findById(offeredCourse);
+    if (!isOfferedCourseExists) {
+        throw new AppError(400, "Offered course not found.")
+    }
+
+    const studentInfo = await Student.findById(student);
+    if (!studentInfo) {
+        throw new AppError(400, "Student not found.")
+    }
+
+    const isSemesterRegistrationExists = await SemesterRegistration.findById(semesterRegistration);
+    if (!isSemesterRegistrationExists) {
+        throw new AppError(400, "Semesters not found.")
+    }
+
+    return { facultyId, payload }
+}
+
 
 export const EnrolledCourseServices = {
-    createEnrollCourseIntoDB
+    createEnrollCourseIntoDB,
+    updateEnrolledCourseMarks
 }

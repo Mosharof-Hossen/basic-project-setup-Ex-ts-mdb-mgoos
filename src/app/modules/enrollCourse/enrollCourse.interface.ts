@@ -6,6 +6,18 @@ export type TCourseMarks = {
     classTest2: number;
     finalTerm: number;
 }
+
+export type TUpdateCourseMarks = {
+    semesterRegistration: string;
+    offeredCourse: string;
+    student: string;
+    courseMarks: {
+        classTest1: number;
+        midTerm: number;
+        classTest2: number;
+        finalTerm: number;
+    }
+}
 export type TGrade = "A" | "B" | "C" | "D" | "E" | "F" | "NA";
 
 export type TEnrollCourse = {

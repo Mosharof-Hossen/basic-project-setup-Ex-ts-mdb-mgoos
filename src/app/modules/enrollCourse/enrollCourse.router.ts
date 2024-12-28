@@ -13,5 +13,11 @@ router.post(
     dataValidator(EnrolledCourseValidations.createEnrolledCourseValidationSchema),
     EnrolledCourseControllers.createEnrolledCourse
 )
+router.patch(
+    '/update-enrolled-course-marks',
+    auth(USER_ROLE.faculty),
+    dataValidator(EnrolledCourseValidations.updateEnrolledCourseMarksValidationSchema),
+    EnrolledCourseControllers.updateEnrolledCourseMarks
+)
 
 export const EnrolledCourseRouter = router;
