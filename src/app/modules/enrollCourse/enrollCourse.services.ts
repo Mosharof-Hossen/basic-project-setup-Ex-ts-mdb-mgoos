@@ -6,6 +6,7 @@ import { TEnrollCourse, TUpdateCourseMarks } from "./enrollCourse.interface";
 import { EnrolledCourse } from "./enrollCourse.model";
 import { SemesterRegistration } from "../semesterRegistration/semesterRegistration.model";
 import { Course } from "../course/course.model";
+import { Faculty } from "../faculty/faculty.model";
 
 const createEnrollCourseIntoDB = async (userId: string, payload: TEnrollCourse) => {
 
@@ -139,7 +140,43 @@ const updateEnrolledCourseMarks = async (facultyId: string, payload: Partial<TUp
         throw new AppError(400, "Semesters not found.")
     }
 
-    return { facultyId, payload }
+    const isFaculty = await Faculty.findOne({ id: facultyId });
+    if (!isFaculty) {
+        throw new AppError(400, "Faculty not found")
+    }
+
+    const isCourseBelongToFaculty = await EnrolledCourse.findOne({
+        semesterRegistration,
+        offeredCourse,
+        student,
+        faculty: isFaculty._id,
+    });
+    if (!isCourseBelongToFaculty) {
+        throw new AppError(400, "This faculty is not updated that course marks.")
+    }
+
+    const modifiedData: Record<string, unknown> = {
+        ...courseMarks
+    }
+    const updateField: Record<string, unknown> = {
+
+    }
+
+    if (modifiedData && Object.keys(modifiedData).length) {
+        for (const [key, value] of Object.entries(modifiedData)) {
+            updateField[`courseMarks.${key}`] = value;
+        }
+    }
+    console.log({ updateField });
+    const result = await EnrolledCourse.findByIdAndUpdate(
+        isCourseBelongToFaculty._id,
+        updateField,
+        {
+            new: true
+        }
+    )
+
+    return result
 }
 
 
