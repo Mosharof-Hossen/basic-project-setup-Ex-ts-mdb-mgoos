@@ -16,4 +16,5 @@ export default {
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   node_mailer_pass: process.env.NODE_MAILER_PASS,
   node_mailer_email: process.env.NODE_MAILER_EMAIL,
+  super_admin_password: process.env.SUPER_ADMIN_PASS,
 };
