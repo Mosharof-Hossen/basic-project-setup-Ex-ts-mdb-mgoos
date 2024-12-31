@@ -1,7 +1,13 @@
+import AppError from '../../errors/AppError';
+import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 
 const createAcademicDepartment = async (payload: TAcademicDepartment) => {
+  const isAcademicFacultyExist = await AcademicFaculty.findById(payload.academicFaculty);
+  if (!isAcademicFacultyExist) {
+    throw new AppError(400, "Academic Faculty is not Exist.")
+  }
   const result = await AcademicDepartment.create(payload);
   return result;
 };
