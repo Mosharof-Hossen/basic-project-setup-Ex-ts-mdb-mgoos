@@ -10,6 +10,16 @@ cloudinary.config({
     api_secret: config.cloudinary_api_secret
 });
 
+export const deleteImage = (path: string) => {
+    fs.unlink(path, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("File is deleted.");
+        }
+    })
+}
+
 export const sendImageToCloudinary = async (imageName: string, path: string) => {
     // Upload an image
     const uploadResult = await cloudinary.uploader
@@ -22,13 +32,7 @@ export const sendImageToCloudinary = async (imageName: string, path: string) => 
             throw new AppError(400, error)
         });
 
-    fs.unlink(path, (err) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("File is deleted.");
-        }
-    })
+    deleteImage(path);
     return uploadResult;
 }
 

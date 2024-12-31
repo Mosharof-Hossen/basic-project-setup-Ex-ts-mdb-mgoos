@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post(
   '/create-student',
-  auth(USER_ROLE.admin as TUserRole, USER_ROLE.student),
+  auth(USER_ROLE.admin as TUserRole, USER_ROLE.superAdmin, USER_ROLE.student),
   upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -25,7 +25,7 @@ router.post(
 );
 router.post(
   '/create-faculty',
-  auth(USER_ROLE.admin as TUserRole),
+  auth(USER_ROLE.admin as TUserRole, USER_ROLE.superAdmin),
   upload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);

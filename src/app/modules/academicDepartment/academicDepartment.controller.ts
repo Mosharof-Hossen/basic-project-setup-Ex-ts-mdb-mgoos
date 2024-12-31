@@ -22,6 +22,7 @@ const getAllAcademicDepartment = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const getSingleAcademicDepartment = catchAsync(async (req, res) => {
   const result = await academicDepartmentServices.getSingleAcademicDepartment(
     req.params.id,
@@ -33,6 +34,7 @@ const getSingleAcademicDepartment = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const updateAcademicDepartment = catchAsync(async (req, res) => {
   const result = await academicDepartmentServices.updateAcademicDepartment(
     req.params.id,

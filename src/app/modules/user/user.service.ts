@@ -13,7 +13,7 @@ import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { USER_ROLE } from './user.constant';
-import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
+import { deleteImage, sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 import { TFaculty } from '../faculty/faculty.interface';
 
 const createStudentIntoDB = async (
@@ -25,23 +25,39 @@ const createStudentIntoDB = async (
   userData.password = passwordData || (config.default_password as string);
   userData.role = 'student';
   userData.email = studentData.email;
+  console.log(file);
 
   const admissionSemester = await AcademicSemester.findById(
     studentData.admissionSemester,
   );
+  if (!admissionSemester) {
+    deleteImage(file?.path);
+    throw new AppError(400, "Admission semester not found.")
+  }
+  const admissionDepartment = await AcademicDepartment.findById(
+    studentData.academicDepartment
+  );
+  if (!admissionDepartment) {
+    deleteImage(file?.path);
+    throw new AppError(400, "Admission semester not found.")
+  }
 
+  studentData.academicFaculty = admissionDepartment.academicFaculty;
   const session = await mongoose.startSession();
+
+  if (file) {
+    // send image to cloudinary.........
+    const imageName = `${userData.id}${studentData?.name.firstName}`;
+    const path = file?.path;
+    const profileImage = await sendImageToCloudinary(imageName, path)
+    studentData.profileImg = profileImage.secure_url;
+  }
+
 
   try {
     session.startTransaction();
 
     userData.id = await generateStudentId(admissionSemester);
-
-    // send image to cloudinary.........
-    const imageName = `${userData.id}${studentData?.name.firstName}`;
-    const path = file?.path;
-    const profileImage = await sendImageToCloudinary(imageName, path)
-
 
     const newUser = await User.create([userData], { session }); // built in static method
 
@@ -50,7 +66,6 @@ const createStudentIntoDB = async (
     }
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id;
-    studentData.profileImg = profileImage.secure_url;
 
     const newStudent = await Student.create([studentData], { session });
     if (!newStudent.length) {
