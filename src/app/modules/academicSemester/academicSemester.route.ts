@@ -2,10 +2,16 @@ import express from 'express';
 import { AcademicSemesterControllers } from './academicSemester.controller';
 import dataValidator from '../../middlwares/dataValidator';
 import { academicSemesterValidations } from './academicSemester.validation';
+import auth from '../../middlwares/auth';
+import { USER_ROLE } from '../user/user.constant';
 
 const router = express.Router();
 
-router.get('/', AcademicSemesterControllers.getAcademicSemester);
+router.get(
+  '/',
+  auth(USER_ROLE.admin),
+  AcademicSemesterControllers.getAcademicSemester);
+
 router.get('/:id', AcademicSemesterControllers.getSingleAcademicSemester);
 router.patch(
   '/:id',
