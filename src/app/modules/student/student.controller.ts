@@ -7,7 +7,8 @@ const getAllStudents = catchAsync(async (req, res) => {
   const result = await studentServices.getAllStudentsFromDB(req.query);
 
   sendResponse(res, {
-    data: result,
+    meta: result.meta,
+    data: result.result,
     statusCode: 200,
     success: true,
     message: 'Students is retrieved successfully',

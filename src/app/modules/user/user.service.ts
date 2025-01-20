@@ -25,7 +25,6 @@ const createStudentIntoDB = async (
   userData.password = passwordData || (config.default_password as string);
   userData.role = 'student';
   userData.email = studentData.email;
-  console.log(file);
 
   const admissionSemester = await AcademicSemester.findById(
     studentData.admissionSemester,
