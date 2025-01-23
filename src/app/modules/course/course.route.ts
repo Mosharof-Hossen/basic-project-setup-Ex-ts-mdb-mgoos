@@ -21,12 +21,20 @@ router.patch(
 );
 router.get('/', courseControllers.getAllCourses);
 router.get('/:id', courseControllers.getSingleCourse);
+
+router.get("/:id/faculties",courseControllers.getCourseFaculty)
+
 router.delete('/:id',auth(USER_ROLE.admin), courseControllers.deleteCourse);
 router.put(
   '/:id/assign-faculties',
   dataValidator(CourseValidation.CourseFacultyValidation),
   courseControllers.assignFaculties,
 );
+
+
+
+
+
 router.delete(
   '/:id/remove-faculties',
   dataValidator(CourseValidation.CourseFacultyValidation),

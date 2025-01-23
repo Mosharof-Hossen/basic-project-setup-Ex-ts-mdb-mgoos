@@ -82,6 +82,7 @@ const createStudentIntoDB = async (
 };
 
 const createFacultyIntoDB = async (file: unknown, password: string, payload: TFaculty) => {
+  console.log({file,password,payload});
   const userData: Partial<TUser> = {};
   userData.password = password || (config.default_password as string);
   userData.role = 'faculty';
@@ -105,6 +106,7 @@ const createFacultyIntoDB = async (file: unknown, password: string, payload: TFa
     userData.id = await facultyId();
 
     const newUser = await User.create([userData], { session });
+    console.log({newUser});
 
     if (!newUser.length) {
       throw new AppError(400, 'Failed to create user');
@@ -115,6 +117,7 @@ const createFacultyIntoDB = async (file: unknown, password: string, payload: TFa
     payload.profileImage = profileImage?.secure_url;
 
     const newFaculty = await Faculty.create([payload], { session });
+    console.log(newFaculty);
     if (!newFaculty.length) {
       throw new AppError(400, 'Failed to create faculty');
     }
